@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterContentInit, ViewChild, ElementRef } from '@angular/core';
+import {saveAs} from 'file-saver';
 
 declare var fabric;
 declare var CP;
@@ -11,12 +12,14 @@ declare var CP;
 
 export class AppComponent implements OnInit{
   @ViewChild('shirt', {static: false}) shirt: ElementRef;
-  @ViewChild('shirt_color_picker', {static: false}) shirt_color_picker: ElementRef;
+  @ViewChild('shirt_color_picker', {static: true}) shirt_color_picker: ElementRef;
+  @ViewChild('design_canvas', {static: true}) design_canvas: ElementRef;
 
   title = 'f2fdesigner';
   public shirt_text: any = '';
 
   canvas: any = {};
+  designData: any;
 
   constructor()
   {
@@ -40,18 +43,30 @@ export class AppComponent implements OnInit{
       }
     }, false);
 
-    var picker = new CP(this.shirt_color_picker.nativeElement);
-    picker.on("change", color => {
-      this.shirt.nativeElement.style.backgroundColor = '#' + color;
-    });
+    let picker = document.querySelector("#color-picker");
+ 
+    /*picker.on("change", color => {
+      let colorhex = "#" + color;
+      console.log(colorhex);
+      this.shirt.nativeElement.style.backgroundColor = colorhex;
+    });*/
+
+    this.canvas.on('object:selected', obj => {
+      console.log(obj.target.get('type'));
+    }); 
+  }
+
+  updateColor(value)
+  {
+    this.shirt.nativeElement.style.backgroundColor = value;
   }
 
   updateShirtImage(imageURL){
  
     console.log(imageURL);
     fabric.Image.fromURL(imageURL, img => {                   
-        img.scaleToHeight(300);
-        img.scaleToWidth(300); 
+        img.scaleToHeight(200);
+        img.scaleToWidth(200); 
 
         this.canvas.centerObject(img);
         this.canvas.add(img);
@@ -85,7 +100,7 @@ export class AppComponent implements OnInit{
   {
     let reader = new FileReader();
     reader.onloadend = (e) => {
-      console.log(reader.result);
+   
       let fileString = reader.result;
 
       var imgObj = new Image();
@@ -95,8 +110,8 @@ export class AppComponent implements OnInit{
       imgObj.onload = () => {
           var img = new fabric.Image(imgObj);
 
-          img.scaleToHeight(300);
-          img.scaleToWidth(300); 
+          img.scaleToHeight(200);
+          img.scaleToWidth(200); 
 
           this.canvas.centerObject(img);
           this.canvas.add(img);
@@ -105,7 +120,7 @@ export class AppComponent implements OnInit{
     };
 
     // If the user selected a picture, load it
-    if(e.target.files[0]){
+    if(e.target.files[0]) {
         reader.readAsDataURL(e.target.files[0]);
     }
   };
@@ -122,8 +137,24 @@ export class AppComponent implements OnInit{
 
   export()
   {
+    /*let canvasBlob = toda( blob => {
+      let filename = Date.now() + '.png';
+      saveAs(canvasBlob, filename);
+    });*/
 
+    let element = this.design_canvas;
+
+    let canvasData = this.canvas.toDataURL('png');
+    this.designData = canvasData;
+
+    //$('#exampleModal').modal();
+
+    /*let designImg = new Image(1000,1000);
+    designImg.src = canvasData;
+
+    var w = window.open("");
+    w.document.write(designImg.outerHTML) ;*/
+    
+    console.log(this.canvas.getActiveObject().get('type'));
   }
-
-
 }
