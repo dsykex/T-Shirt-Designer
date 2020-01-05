@@ -18,6 +18,54 @@
   </div>
 </div>
 
+
+<div class="designer-panel row text-center">
+  <div class="open-tab float-right"></div>
+  <div class="row my-1 w-100">
+    <div class="col p-4">
+      <label for="tshirt-color">T-Shirt Color:</label>
+      <p>     
+        <input id="tshirt-color" value="#ffffff"  class="mx-auto " #shirt_color (change)="updateShirtColor(shirt_color.value)" type="color" />
+      </p>
+
+      <label for="tshirt-design">T-Shirt Design:</label>
+      <select id="tshirt-design" #design (change)="updateShirtImage(design.value)" class="form-control">
+          <option value="">Select one of our designs</option>
+          <option value="../assets/img/superman.png">Superman</option>
+    
+      </select>
+      <hr class="my-4">
+      <label for="tshirt-custompicture">Upload your own design:</label>
+      <input type="file" id="tshirt-custompicture" class="form-control mx-auto" (change)="selectCustomDesign($event)" />
+
+      <br>
+      <input type="text" [(ngModel)]="shirt_text" class="form-control" placeholder="Shirt Text" />
+      <button class="btn btn-secondary btn-block" (click)="updateText(shirt_text)">Add text</button>
+      
+      <div *ngIf="textboxSelected">
+        <select #font_family class="form-control" (change)="updateTextFont(font_family.value)" [(ngModel)]="text_font" >
+          <option value="">Choose a font</option>
+          <option value="Impact" [ngStyle]="{'font-family': 'Impact'}">Impact</option>
+          <option value="Courier" [ngStyle]="{'font-family': 'Courier'}">Courier</option>
+          <option value="Pacifico" [ngStyle]="{'font-family': 'Pacifico'}">Pacifico</option>
+          <option value="Hanalei Fill" [ngStyle]="{'font-family': 'Hanalei Fill'}">Hanalei Fill</option>
+          <option vlaue="Abril Fatface" [ngStyle]="{'font-family': 'Abril Fatface'}">Abril Fatface</option>
+          <option value="Shadows Into Light" [ngStyle]="{'font-family': 'Shadows Into Light'}">Shadows Into Light</option>
+        </select>
+        <br>
+        <p>     
+          Font color
+          <input [(ngModel)]="text_color"  class="mx-auto form-control" #shirt_color_picker (change)="updateTextColor(shirt_color_picker.value)" type="color" />
+        </p>  
+      </div>
+      <hr class="my-4">
+      <br>
+      <button class="btn btn-dark btn-block btn-lg"(click)="export()" >Export</button>
+      
+    </div>
+  </div>
+</div>
+
 <div class="container">
   <div class="row justify-content-center">
     <div class="col col-sm-12">
@@ -33,7 +81,7 @@
   </div>
   <hr>
   <div class="row my-5">
-    <div class="col col-7 shirt_wrapper">
+    <div class="col col-12 shirt_wrapper">
       <!-- Create the container of the tool -->
       <div id="tshirt-div" #shirt>
         <!-- 
@@ -52,41 +100,6 @@
             </div>
         </div>  
       </div>
-    </div>
-    <div class="col col-5 p-4">
-      <label for="tshirt-color">T-Shirt Color:</label>
-      <p>     
-        <input value="#ffffff"  class="mx-auto form-control" #color_picker (change)="updateColor(color_picker.value)" type="color" />
-      </p>
-      <br>
-      <label for="tshirt-design">T-Shirt Design:</label>
-      <select id="tshirt-design" #design (change)="updateShirtImage(design.value)" class="form-control">
-          <option value="">Select one of our designs</option>
-          <option value="../assets/img/superman.png">Superman Logo</option>
-          <option value="https://i.pinimg.com/originals/2e/8c/65/2e8c65c88e2357f57e406de124345a2f.png">Joker/Harvey Design</option>
-      </select>
-      <hr class="my-4">
-      <label for="tshirt-custompicture">Upload your own design:</label>
-      <input type="file" id="tshirt-custompicture" class="form-control mx-auto" (change)="selectCustomDesign($event)" />
-
-      <br>
-      <input type="text" [(ngModel)]="shirt_text" class="form-control" placeholder="Shirt Text" />
-      <select #font_family class="form-control" (change)="updateTextFont(font_family.value)">
-        <option value="">Choose a font</option>
-        <option value="Impact" [ngStyle]="{'font-family': 'Impact'}">Impact</option>
-        <option value="Courier" [ngStyle]="{'font-family': 'Courier'}">Courier</option>
-        <option value="Pacifico" [ngStyle]="{'font-family': 'Pacifico'}">Pacifico</option>
-      </select>
-      <br>
-      <p>     
-        Font color
-        <input value="#ffffff"  class="mx-auto form-control" #color_picker (change)="updateTextColor(color_picker.value)" type="color" />
-      </p>
-      <button class="btn btn-secondary btn-block" (click)="updateText(shirt_text)">Add text</button>
-      <hr class="my-4">
-      <br>
-      <button class="btn btn-dark btn-block"(click)="export()" >Export</button>
-      
     </div>
   </div>
 </div>

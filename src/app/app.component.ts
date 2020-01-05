@@ -3,6 +3,7 @@ import {saveAs} from 'file-saver';
 
 declare var fabric;
 declare var CP;
+declare var domtoimage;
 
 @Component({
   selector: 'app-root',
@@ -11,15 +12,18 @@ declare var CP;
 })
 
 export class AppComponent implements OnInit{
-  @ViewChild('shirt', {static: false}) shirt: ElementRef;
+  @ViewChild('shirt', {static: true}) shirt: ElementRef;
   @ViewChild('shirt_color_picker', {static: true}) shirt_color_picker: ElementRef;
   @ViewChild('design_canvas', {static: true}) design_canvas: ElementRef;
 
   title = 'f2fdesigner';
   public shirt_text: any = '';
+  public textboxSelected: boolean = false;
 
   canvas: any = {};
   designData: any;
+  text_font: any;
+  text_color: any;
 
   constructor()
   {
@@ -51,8 +55,30 @@ export class AppComponent implements OnInit{
       this.shirt.nativeElement.style.backgroundColor = colorhex;
     });*/
 
+    this.canvas.on('before:selection:cleared', obj => {
+      let type = obj.target.get('type');
+      console.log(type);
+      if(type == "textbox")
+      {
+        this.textboxSelected = false
+        //this.text_color = this.canvas.getActiveObject().get('fill')
+      }
+      else
+        this.textboxSelected = true;
+    });
+
     this.canvas.on('object:selected', obj => {
-      console.log(obj.target.get('type'));
+      let type = obj.target.get('type');
+
+      if(type == "textbox")
+      {
+        this.text_color = this.canvas.getActiveObject().get('fill')
+        this.text_font = this.canvas.getActiveObject().get("fontFamily");
+
+        this.textboxSelected = true;
+      }
+      else
+        this.textboxSelected = false;
     }); 
   }
 
@@ -100,7 +126,6 @@ export class AppComponent implements OnInit{
   {
     let reader = new FileReader();
     reader.onloadend = (e) => {
-   
       let fileString = reader.result;
 
       var imgObj = new Image();
@@ -128,6 +153,7 @@ export class AppComponent implements OnInit{
   updateShirtColor(color)
   {
     this.shirt.nativeElement.style.backgroundColor = color;
+  
   }
 
   uploadPicture()
@@ -148,13 +174,25 @@ export class AppComponent implements OnInit{
     this.designData = canvasData;
 
     //$('#exampleModal').modal();
-
-    /*let designImg = new Image(1000,1000);
+    /*
+    let designImg = new Image(1000,1000);
     designImg.src = canvasData;
 
     var w = window.open("");
-    w.document.write(designImg.outerHTML) ;*/
-    
-    console.log(this.canvas.getActiveObject().get('type'));
+    w.document.write(designImg.outerHTML) ;
+    */
+   
+    domtoimage.toPng(this.shirt.nativeElement).then(dataUrl => {
+      // Print the data URL of the picture in the Console
+      console.log(dataUrl);
+  
+      // You can for example to test, add the image at the end of the document
+      var img = new Image();
+      img.src = dataUrl;
+      
+      document.body.appendChild(img);
+    }).catch(function (error) {
+        console.error('oops, something went wrong!', error);
+    });
   }
 }
